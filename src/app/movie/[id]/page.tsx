@@ -5,7 +5,6 @@ import WatchedButton from '../../components/WatchedButton'
 import SaveToListModal from "../../components/SaveToListModal"
 import RatingModal from '../../components/RatingModal'
 import { checkIfWatched, getMoveRating } from '../../actions/movie-action'
-import { STANDOUT_ELEMENTS, BRAIN_POWER_OPTIONS, ATTENTION_OPTIONS } from '../../lib/vibe-rating-config'
 import Image from 'next/image'
 import { Dot, Star } from 'lucide-react'
 interface PageProps {
@@ -17,7 +16,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
 
     const id = await params;
     const movie = await getMovieDetails(id.id);
-    const isWatched = await checkIfWatched(id.id)
+    const isWatched = await checkIfWatched(Number(id.id))
     const personalRating = await getMoveRating(movie.id)
     const backDropUrl = movie.backdrop_path
         ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`

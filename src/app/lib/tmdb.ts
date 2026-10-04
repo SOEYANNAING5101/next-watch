@@ -15,6 +15,13 @@ export interface CastMember {
     character: string;
     profile_path: string | null;
 }
+export interface CrewMember{
+    id:number;
+    name:string;
+    job:string;
+    department:string;
+    profile_path : string | null;
+}
 
 export interface Movie {
     id: number;
@@ -31,7 +38,8 @@ export interface MovieDetails extends Movie {
     runtime:number;
     genres: Genre[];
     credits: {
-        cast:CastMember[]
+        cast:CastMember[];
+        crew:CrewMember[]
     };
     videos:{
         results:Video[]

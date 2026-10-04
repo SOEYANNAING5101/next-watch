@@ -7,7 +7,6 @@ import { watchedMovies, customLists, listItems, movieRatings } from '../../db/sc
 import { revalidatePath } from 'next/cache';
 import { getMovieDetails } from '../lib/tmdb';
 import { ROULETTE_OPTIONS } from '../lib/roulette-config';
-import { Zap } from 'lucide-react';
 
 export async function checkIfWatched(movieId: number) {
     const session = await auth.api.getSession({
