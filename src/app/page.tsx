@@ -1,5 +1,3 @@
-
-import Link from "next/link";
 import { getTrendingMovies, getTopRatedMovies, getNewReleases } from './lib/tmdb'
 import MovieRow from '../app/components/MovieRow'
 
