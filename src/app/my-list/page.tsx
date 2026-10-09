@@ -9,24 +9,30 @@ export default async function MyListPage() {
     const session = await auth.api.getSession({
         headers: await headers()
     });
-
-    const watchedRecords = await getWatchedMovies();
-    const watchedMovies = await Promise.all(
-        watchedRecords.map((record) => getMovieDetails(record.tmdbId.toString()))
-    );
-    const userLists = await getUserLists();
-    const listsWithMovies = await Promise.all(
-        userLists.map(async (list) => {
+    const fetchWatchedMovies = async () => {
+        const watchedRecords = await getWatchedMovies();
+        return Promise.all(
+            watchedRecords.map((record) => getMovieDetails(record.tmdbId.toString()))
+        )
+    }
+    const fetchUserLists = async () => {
+        const userLists = await getUserLists();
+        const result = [];
+        for (const list of userLists) {
             const dbItems = await getListItems(list.id);
             const movies = await Promise.all(
                 dbItems.map(async (movie) => await getMovieDetails(movie.tmdbId))
-            )
-            return {
-                ...list,
-                movies
-            }
-        })
-    );
+            );
+            result.push({...list, movies}) 
+        }
+        return result;
+
+    }
+    const [watchedMovies, listsWithMovies] = await Promise.all([
+        fetchWatchedMovies(),
+        fetchUserLists()
+    ])
+
     return (
         <div className="p-10 text-white">
             {watchedMovies.length > 0 && (

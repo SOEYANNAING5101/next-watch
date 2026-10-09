@@ -299,7 +299,7 @@ export async function saveMoveRating(data: RatingPayload) {
         return { success: false, error: "Failed to save to database." }
     }
 }
-export async function getMoveRating(movieId: number) {
+export async function getMovieRating(movieId: number) {
     const session = await auth.api.getSession({
         headers: await headers()
     });

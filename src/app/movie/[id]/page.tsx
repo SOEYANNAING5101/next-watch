@@ -4,7 +4,7 @@ import TrailerButton from '../../components/TrailerButton'
 import WatchedButton from '../../components/WatchedButton'
 import SaveToListModal from "../../components/SaveToListModal"
 import RatingModal from '../../components/RatingModal'
-import { checkIfWatched, getMoveRating } from '../../actions/movie-action'
+import { checkIfWatched, getMovieRating } from '../../actions/movie-action'
 import Image from 'next/image'
 import { Dot, Star } from 'lucide-react'
 interface PageProps {
@@ -14,10 +14,15 @@ interface PageProps {
 }
 export default async function MovieDetailPage({ params }: PageProps) {
 
-    const id = await params;
-    const movie = await getMovieDetails(id.id);
-    const isWatched = await checkIfWatched(Number(id.id))
-    const personalRating = await getMoveRating(movie.id)
+    const resolvedParams = await params;
+    const stringId = resolvedParams.id;
+    const numericId = Number(stringId);
+
+    const [movie,isWatched,personalRating] = await Promise.all([
+        getMovieDetails(stringId),
+        checkIfWatched(numericId),
+        getMovieRating(numericId)
+    ])
     const backDropUrl = movie.backdrop_path
         ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
         : "https://via.placeholder.com/1920x1080?text=No+Background"
