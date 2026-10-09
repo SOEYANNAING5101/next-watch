@@ -1,8 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dices, X, Dice5, Star, Dot, RefreshCcw, MoveRight, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { createPortal } from 'react-dom'
 
 import CustomDropDown from './CustomDropDown'
 import { getUserLists, spinFromList, spinFromDiscoverNew } from '../actions/movie-action'
@@ -14,8 +15,9 @@ interface CustomList {
     listName: string;
 }
 
-export default function RouletteModal() {
+export default function RouletteModal({ children }: { children?: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [activeTab, setActiveTab] = useState<'discover-new' | 'my-lists'>('discover-new')
     const [spinState, setSpinState] = useState<'idle' | 'spinning' | 'result'>('idle');
@@ -27,7 +29,9 @@ export default function RouletteModal() {
 
     const [userLists, setUserLists] = useState<CustomList[]>([]);
     const [selectedList, setSelectedList] = useState<string>("Loading lists...")
-
+    useEffect(() => {
+        setMounted(true)
+    }, [])
     const handleClose = async () => {
         setIsOpen(false);
         setSpinState('idle');
@@ -84,7 +88,6 @@ export default function RouletteModal() {
                     spinFromDiscoverNew(genre, decade, language),
                     new Promise((resolve) => setTimeout(resolve, 5000))
                 ]);
-                console.log("winningMovie", winningMovie)
                 setWinner(winningMovie)
                 setSpinState('result')
 
@@ -95,13 +98,16 @@ export default function RouletteModal() {
         }
     }
     return (
-        <div>
-            <button onClick={handleOpen}>
-                <Dices size={18} />
+        <div className='w-full'>
+            <button
+                onClick={handleOpen}
+                className='text-slate-950 text-sm font-semibold tracking-wide bg-white px-2 py-1.5 flex items-center justify-center gap-2 rounded-sm cursor-pointer hover:scale-105 hover:bg-slate-200 transition-all duration-200 ease-in-out active:scale-95 w-full'>
+                <Dices size={15} />
+                <span>MOVIE ROULETTE</span>
             </button>
-            {isOpen && (
-                <div className=" bg-black/70 fixed inset-0 flex items-center justify-center z-60 ">
-                    <div className="flex flex-col bg-slate-950 p-6 rounded-lg min-w-[300px] ">
+            {mounted && isOpen && createPortal(
+                <div className=" bg-black/70 fixed inset-0 flex items-center justify-center z-[100]">
+                    <div className="flex flex-col bg-slate-950 p-6 rounded-lg min-w-[300px]">
                         {/* Header */}
                         <div className="flex items-center justify-between w-full">
                             <div className='flex flex-col items-start '>
@@ -252,7 +258,8 @@ export default function RouletteModal() {
                         )}
 
                     </div>
-                </div>
+                </div>,
+                document.body
             )
             }
         </div >
