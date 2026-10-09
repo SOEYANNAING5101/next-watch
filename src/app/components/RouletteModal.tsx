@@ -99,11 +99,6 @@ export default function RouletteModal({ children }: { children?: React.ReactNode
     }
     return (
         <div className='w-full'>
-            {/* <div onClick={handleOpen} className="w-full cursor-pointer">
-                {children ? children : (
-                    
-                )}
-            </div> */}
             <button
                 onClick={handleOpen}
                 className='text-slate-950 text-sm font-semibold tracking-wide bg-white px-2 py-1.5 flex items-center justify-center gap-2 rounded-sm cursor-pointer hover:scale-105 hover:bg-slate-200 transition-all duration-200 ease-in-out active:scale-95 w-full'>

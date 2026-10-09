@@ -78,9 +78,6 @@ export default function MobileDrawer() {
                     <div className='border border-gray-400 rounded-lg p-4 flex flex-col '>
                         <h2 className='text-gray-200 text-lg font-semibold mb-2'>Movie Roulette</h2>
                         <span className='text-gray-400 text-sm font-semibold mb-4'>Can&apos;t decide? Let fate pick your next cinematic adventure right now.</span>
-                        {/* <div className="w-full bg-gray-200 text-black font-bold py-2.5 rounded-md flex items-center justify-center gap-2 group-hover:scale-[1.02] transition-transform duration-200">
-                            SPIN NOW
-                        </div> */}
                         <RouletteModal />
                     </div>
                 
