@@ -6,23 +6,23 @@ export default async function HomePage() {
   const topRatedMovies = await getTopRatedMovies();
   const newReleasedMovies = await getNewReleases();
   return (
-    <main className="min-h-screen px-6 py-5 md:px-12">
+    <main className="min-h-screen px-6 py-2 md:px-12">
       {/* Trending Now Grid */}
-      <div className="pt-8 space-y-6">
+      <div className="pt-4 space-y-6">
         <MovieRow
           title="Trending Now"
           movies={trendingMovies}
           seeAllHref="" />
       </div>
       {/* Top Rated Grid */}
-      <div className="pt-8 space-y-6">
+      <div className="pt-6 space-y-6">
         <MovieRow
           title="Top Rated"
           movies={topRatedMovies}
           seeAllHref="" />
       </div>
       {/* New Releases Grid */}
-      <div className="pt-8 space-y-6">
+      <div className="pt-6 space-y-6">
         <MovieRow
           title="New Releases"
           movies={newReleasedMovies}
