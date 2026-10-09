@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { toggleWatch } from '../actions/movie-action'
 import { CircleCheckBig, Loader2, Plus } from 'lucide-react'
+import {toast} from 'sonner'
 
 interface WatchedButtonProps {
     movieId: number,
@@ -15,11 +16,17 @@ export default function WatchedButton({ movieId, initialIsWatched }: WatchedButt
         setIsLoading(true);
         const result = await toggleWatch(movieId)
         if (result.error) {
-            alert(result.error)
+            toast.error(result.error)
         } else if (result.isWatched !== undefined) {
             setIsWatched(result.isWatched)
+            if(result.isWatched){
+                toast.success("Marked as watched")
+            }else{
+                toast.success("Removed form watched list")
+            }
         }
         setIsLoading(false)
+
     }
     return (
         <button 
