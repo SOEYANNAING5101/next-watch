@@ -112,34 +112,20 @@ export default function RatingModal({ movieId, movieTitle, releaseYear, director
     return (
         <>
             {initialData ? (
-                <div
+                <button
                     onClick={() => setIsOpen(true)}
-                    className='flex items-center justify-center gap-2 cursor-pointer group transition duration-200 hover:opacity-80 '>
-                    <div className='flex gap-1 items-center justify-center'>
-                        <Star color='#3099ca' size={16} fill='#3099ca' />
-                        <span className='text-[#3099ca] text-sm font-bold'>{initialData.finalScore}</span>
-                        <span className='text-gray-400 text-xs'>/100</span>
-                    </div>
-                    <span className='text-gray-400'>|</span>
-                    <span className='text-gray-400 text-sm'>{ATTENTION_OPTIONS[initialData.attentionTest]}</span>
-                    <span className='text-gray-400'>|</span>
-                    <span className='text-gray-400 text-sm'>{BRAIN_POWER_OPTIONS.find((o) => o.label === initialData.brainPower)?.emoji}{initialData.brainPower}</span>
-                    <div
-                        className={`flex items-center justify-center gap-2 text-sm font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200}`}>
-                        {initialData.standoutElements.map((element) => {
-                            const match = STANDOUT_ELEMENTS.find((o) => o.label === element);
-                            return (
-                                <span key={element} className='text-gray-400 text-sm'>
-                                    {match ? `${match.emoji} ${match.label}` : element}
-                                </span>
-                            )
-                        })}
-                    </div>
-                </div>
+                    className='flex flex-col gap-1 text-sm text-gray-200 hover:bg-gray-800 font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200 '>
+                        <span className='text-gray-400 text-[xs] font-semibold'>Personal Rating</span>
+                    <div className='flex gap-1 items-center'>
+                            <Star color='#1a30d9' size={16} fill='#1a30d9' />
+                            <span className='text-[#1a30d9] font-bold'>{initialData.finalScore}</span>
+                            <span className='text-gray-400 text-xs'>/10</span>
+                        </div>
+                </button>
             ) : (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className='flex items-center justify-center gap-2 text-sm text-gray-200 hover:text-[#68c9da] font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200 '>
+                    className='flex items-center justify-center gap-2 text-sm text-gray-200 hover:bg-gray-800 font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200 '>
                     <span>
                         <Star size={20} color='#68c9da' />
                     </span>Rate this

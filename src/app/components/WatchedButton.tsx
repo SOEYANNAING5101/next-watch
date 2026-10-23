@@ -32,7 +32,7 @@ export default function WatchedButton({ movieId, initialIsWatched }: WatchedButt
         <button 
         onClick={handleClick}
         disabled={isLoading} 
-        className={`flex items-center justify-center gap-2 text-sm font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200
+        className={` flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200
             ${isLoading ? "text-gray-200 opacity-80 cursor-not-allowed" : ""}
             ${isWatched ? "text-[#68c9da] hover:text-gray-200" : "text-gray-200 hover:text-[#68c9da]"}`}>
                 {isLoading ?(

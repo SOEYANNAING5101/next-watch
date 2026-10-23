@@ -18,7 +18,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
     const stringId = resolvedParams.id;
     const numericId = Number(stringId);
 
-    const [movie,isWatched,personalRating] = await Promise.all([
+    const [movie, isWatched, personalRating] = await Promise.all([
         getMovieDetails(stringId),
         checkIfWatched(numericId),
         getMovieRating(numericId)
@@ -35,8 +35,79 @@ export default async function MovieDetailPage({ params }: PageProps) {
 
 
     return (
-        <div className='min-h-screen bg-slate-950'>
-            <div className='relative h-[70vh] md:h-[80vh] w-full'>
+        <div className='min-h-screen bg-slate-950 min-w-[1000]px'>
+            {/* Mobile View */}
+            <div className='block md:hidden'>
+                {/* Backdrop image & Backbutton */}
+                <div className='relative h-[39vh] w-full'>
+                    <BackButton />
+                    <Image
+                        src={backDropUrl}
+                        alt={movie.title}
+                        className='object-cover'
+                        fill
+                        priority />
+                    <div className='absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent'></div>
+                    <div className='absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent'></div>
+                </div>
+                <div className='px-4 relative'>
+                    <div className='flex gap-4'>
+                        <div className='-mt-16 w[110px] shrink-0'>
+                            <Image
+                                src={posterPath}
+                                alt={movie.title}
+                                height={110}
+                                width={125}
+                                className='rounded-lg backdrop-blur-2 object-cover'
+                            />
+                        </div>
+                        <div className='flex flex-col pb-1'>
+                            <h1 className="flex items-center text-gray-200 text-xl font-extrabold tracking-tight drop-shadow-lg">
+                                {movie.title}
+                            </h1>
+                            {/* Release date, Age Rating, Runtime */}
+                            <div className='text-gray-400 text-xs flex items-center  mb-2'>
+                                <span className=''>{release_Year}</span>
+                                <span className=''><Dot /></span>
+                                <span className=''>{movie.certification}</span>
+                                <span className=''><Dot /></span>
+                                <span className=''>{movie.runtime}m</span>
+                            </div>
+                            {/* Genres */}
+                            <div className='flex flex-wrap gap-2 items-center'>
+                                {movie.genres.map((genre) => (
+                                    <div
+                                        className='bg-gray-700 px-2 py-1 text-gray-200 rounded-full flex items-center justify-center text-xs'
+                                        key={genre.id}>{genre.name}</div>
+                                ))}
+                            </div>
+
+                        </div>
+                    </div>
+                    {/* Personal Rating */}
+                    <div className='mt-4 flex items-center gap-4'>
+                        <div className='flex flex-col gap-1 rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900'
+                            >
+                                <span className='text-gray-400 text-xs font-semibold'>TMDB Rating</span>
+                                <div className='flex gap-1 items-center'>
+                                    <Star color='#ffe224' size={16} fill='#ffe224' />
+                                    <span className='text-[#ffe224] font-bold'>{movie.vote_average.toFixed(1)}</span>
+                                    <span className='text-gray-400 text-xs'>/10</span>
+                                </div>
+                            </div>
+                        <RatingModal
+                            movieId={movie.id}
+                            movieTitle={movie.title}
+                            releaseYear={release_Year}
+                            director={director}
+                            initialData={personalRating}
+                        />
+                    </div>
+                </div>
+
+            </div>
+            {/* Desktop View */}
+            <div className='hidden md:flex relative h-[80vh] w-full'>
                 <BackButton />
                 <Image
                     src={backDropUrl}
@@ -46,7 +117,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
                     priority />
                 <div className='absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent'></div>
                 <div className='absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent'></div>
-                <div className='absolute bottom-0 left-0 z-10 w-full p-6 mb:p-15 md:flex'>
+                <div className='absolute bottom-0 left-0 z-10 w-full p-6 flex'>
                     {/* Poster */}
                     <div className='w-full max-w-[150px] md:max-w-[200px]'>
                         <Image
@@ -72,13 +143,16 @@ export default async function MovieDetailPage({ params }: PageProps) {
                             <span className=''>{movie.runtime}m</span>
                         </div>
                         {/* Ratings */}
-                        <div className='flex md:flex-row flex-col items-center md:items-center gap-2 md:justify-center tracking-wide mb-4'>
-                            <div className='flex gap-1 items-center justify-center'>
-                                <Star color='#ffe224' size={16} fill='#ffe224' />
-                                <span className='text-[#ffe224] text-sm font-bold'>{movie.vote_average.toFixed(1)}</span>
-                                <span className='text-gray-400 text-xs'>/10</span>
+                        <div className='mt-4 mb-4 flex items-center gap-2'>
+                            <div className='flex flex-col gap-1 rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900'
+                            >
+                                <span className='text-gray-400 text-xs font-semibold'>TMDB Rating</span>
+                                <div className='flex gap-1 items-center'>
+                                    <Star color='#ffe224' size={16} fill='#ffe224' />
+                                    <span className='text-[#ffe224] text font-bold'>{movie.vote_average.toFixed(1)}</span>
+                                    <span className='text-gray-400 text-xs'>/10</span>
+                                </div>
                             </div>
-                            <span className='text-gray-400'>|</span>
                             <RatingModal
                                 movieId={movie.id}
                                 movieTitle={movie.title}
@@ -86,7 +160,6 @@ export default async function MovieDetailPage({ params }: PageProps) {
                                 director={director}
                                 initialData={personalRating}
                             />
-
                         </div>
                         <div className='flex gap-2 items-center justify-center'>
                             {movie.genres.map((genre) => (
@@ -100,24 +173,23 @@ export default async function MovieDetailPage({ params }: PageProps) {
                             <h2 className='text-gray-200 text-sm md:text-lg font-bold mt-2'>Overview</h2>
                             <p className='text-gray-400 text-xs md:text-sm'>{movie.overview}</p>
                         </div>
-                        <div className='flex flex-col md:flex-row gap-2 mt-4'>
+                        <div className='flex gap-2 mt-4'>
                             <WatchedButton
                                 movieId={movie.id}
                                 initialIsWatched={isWatched} />
                             <SaveToListModal
                                 movieId={movie.id} />
-
                         </div>
 
                     </div>
                 </div>
             </div>
             {/* Meta data */}
-            <div className='p-6'>
+            <div className='p-4 md:p-6'>
                 {/* Cast & Credit */}
                 <div className='w-full max-w-[1000px] mb-8'>
                     <label className='text-gray-200 text-sm md:text-lg font-bold mt-2'>Cast</label>
-                    <div className='flex gap-4 mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
+                    <div className='flex gap-4 mt-2 md:grid overflow-auto scrollbar-none grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
                         {casts.map((cast) => (
                             <div key={cast.id}
                                 className='flex flex-col items-center justify-center'>
