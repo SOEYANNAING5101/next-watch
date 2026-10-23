@@ -61,7 +61,7 @@ export default function SaveToListModal({ movieId }: SaveToListModalProps) {
         <div >
             <button
                 onClick={handleOpen}
-                className="flex items-center justify-center text-sm text-gray-200 hover:text-[#68c9da] font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200">
+                className=" flex items-center justify-center text-xs md:text-sm text-gray-200 hover:text-[#68c9da] font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200">
                 <Plus size={18} />
                 <span>ADD TO LIST</span>
             </button>
