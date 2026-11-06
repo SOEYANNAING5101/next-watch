@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { getListStatus, toggleMovieInList, createCustomLists } from "../actions/movie-action";
 import { X, Plus, Check } from 'lucide-react'
-import {toast} from 'sonner'
+import { toast } from 'sonner'
 
 interface CustomList {
     id: string;
@@ -47,16 +47,22 @@ export default function SaveToListModal({ movieId }: SaveToListModalProps) {
         e.preventDefault();
         if (!newListName.trim()) return;
         setIsCreating(true);
-        const result = await createCustomLists(newListName);
-        if (result?.list) {
-            toast.success("Created new list.")
-            setNewListName("");
-            setLists([...lists, result.list as CustomList])
-            setShowInputForm(false);
-            await handleToggle(result.list.id)
+        try {
+            const result = await createCustomLists(newListName);
+            if (result?.list) {
+                toast.success("Created new list.")
+                setNewListName("");
+                setLists([...lists, result.list as CustomList])
+                setShowInputForm(false);
+                await handleToggle(result.list.id)
+            }
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : "Could not create list")
+        }finally{
+            setIsCreating(false);
         }
-        setIsCreating(false);
     }
+
     return (
         <div >
             <button

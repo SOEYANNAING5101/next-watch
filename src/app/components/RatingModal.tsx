@@ -6,7 +6,7 @@ import BrainPowerToggle from './BrainPowerToggle';
 import StandoutFilmStrip from './StandoutFilmStrip'
 import FinalVerdictSelection from './FinalVerdictSelection';
 import RatingResult from './RatingResult'
-import { saveMoveRating } from '../actions/movie-action'
+import { saveMovieRating } from '../actions/movie-action'
 import { STANDOUT_ELEMENTS, BRAIN_POWER_OPTIONS, ATTENTION_OPTIONS, VERDICT_OPTIONS } from '../lib/vibe-rating-config'
 import {toast} from 'sonner'
 export interface RatingData {
@@ -89,12 +89,11 @@ export default function RatingModal({ movieId, movieTitle, releaseYear, director
             cinematography: scores.cinematography,
             pacing: scores.pacing,
             verdict: finalVerdict.points,
-            finalScore: finalScore,
             attentionTest: vibes.attention,
             brainPower: vibes.brainPower,
             standoutElements: vibes.standoutElements
         };
-        const result = await saveMoveRating(payload);
+        const result = await saveMovieRating(payload);
         if (result.success) {
             toast.success("Successfully saved. ")
             handleClose();
