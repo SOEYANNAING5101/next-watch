@@ -7,8 +7,11 @@ import { watchedMovies, customLists, listItems, movieRatings } from '../../db/sc
 import { revalidatePath } from 'next/cache';
 import { getMovieDetails } from '../lib/tmdb';
 import { ROULETTE_OPTIONS } from '../lib/roulette-config';
+import {  z } from 'zod'
+import {ratingSchema,listNameSchema,uuidSchema,genreLabelSchema,decadesLabelSchema,languagesLabelSchema} from '../lib/validation'
 
 async function getOwnedList(listId:string,userId:string){
+    if(!uuidSchema.safeParse(listId).success) return null;
     const [list] = await db
         .select ({id:customLists.id})
         .from(customLists)
@@ -151,11 +154,14 @@ export async function createCustomLists(listname: string) {
         headers: await headers()
     })
     if (!session) throw new Error("Please log in to continue.")
+    const parsed = listNameSchema.safeParse(listname)
+    if (!parsed.success) throw new Error (parsed.error.issues[0].message)
+
     const newList = await db
         .insert(customLists)
         .values({
             userId: session.user.id,
-            listName: listname
+            listName: parsed.data
         })
         .returning()
 
@@ -204,7 +210,13 @@ export async function spinFromList(listId: string) {
     return winningMovie
 }
 export async function spinFromDiscoverNew(genreLabel: string, decadeLabel: string, languageLabel: string) {
-
+    if (
+        !genreLabelSchema.safeParse(genreLabel).success || 
+        !decadesLabelSchema.safeParse(decadeLabel).success ||
+        !languagesLabelSchema.safeParse(languageLabel).success
+    ){
+        throw new Error ("Invalid filter selection.")
+    }
     const BASE_URL = "https://api.themoviedb.org/3/discover/movie";
     const options = {
         method: 'GET',
@@ -255,19 +267,9 @@ export async function spinFromDiscoverNew(genreLabel: string, decadeLabel: strin
         throw error;
     }
 }
-interface RatingPayload {
-    tmdbId: number;
-    acting: number;
-    plot: number;
-    cinematography: number;
-    pacing: number;
-    verdict: number;
-    finalScore: number;
-    attentionTest: string;
-    brainPower: string;
-    standoutElements: string[]
-}
-export async function saveMoveRating(data: RatingPayload) {
+
+type RatingInput = z.infer<typeof ratingSchema>
+export async function saveMovieRating(data: RatingInput) {
     try {
         const session = await auth.api.getSession({
             headers: await headers()
@@ -275,18 +277,23 @@ export async function saveMoveRating(data: RatingPayload) {
         if (!session) {
             return { success: false, error: "You must be logged in to save a rating." };
         }
-
+        const parsed = ratingSchema.safeParse(data)
+        if (!parsed.success){
+            return {success:false,error:"Invalid rating data"}
+        }
+        const v = parsed.data
+        const finalScore = v.acting +v.pacing +v.plot+v.cinematography+v.verdict
         const userId = session.user.id;
         const payLoad = {
-            acting: data.acting,
-            plot: data.plot,
-            cinematography: data.cinematography,
-            pacing: data.pacing,
-            verdict: data.verdict,
-            finalScore: data.finalScore,
-            attentionTest: data.attentionTest,
-            brainPower: data.brainPower,
-            standoutElements: data.standoutElements
+            acting: v.acting,
+            plot: v.plot,
+            cinematography: v.cinematography,
+            pacing: v.pacing,
+            verdict: v.verdict,
+            finalScore,
+            attentionTest: v.attentionTest,
+            brainPower: v.brainPower,
+            standoutElements: v.standoutElements
         }
         const existingRecord = await db
             .select()
@@ -314,8 +321,7 @@ export async function saveMoveRating(data: RatingPayload) {
                 ...payLoad
             })
         }
-
-        revalidatePath(`/movies/${data.tmdbId}`)
+        revalidatePath(`/movie/${data.tmdbId}`)
         return { success: true }
 
     } catch (error) {
