@@ -85,8 +85,8 @@ export default async function MovieDetailPage({ params }: PageProps) {
                         </div>
                     </div>
                     {/* Personal Rating */}
-                    <div className='mt-4 flex items-center gap-4'>
-                        <div className='flex flex-col gap-1 rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900'
+                    <div className='mt-4 flex  gap-4'>
+                        <div className='flex flex-col gap-1 rounded-sm px-4 py-1.5 border border-gray-800 '
                             >
                                 <span className='text-gray-400 text-xs font-semibold'>TMDB Rating</span>
                                 <div className='flex gap-1 items-center'>
@@ -143,8 +143,8 @@ export default async function MovieDetailPage({ params }: PageProps) {
                             <span className=''>{movie.runtime}m</span>
                         </div>
                         {/* Ratings */}
-                        <div className='mt-4 mb-4 flex items-center gap-2'>
-                            <div className='flex flex-col gap-1 rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900'
+                        <div className='mt-4 mb-4 flex  gap-2 '>
+                            <div className='flex flex-col gap-1 rounded-sm px-4 py-1.5  '
                             >
                                 <span className='text-gray-400 text-xs font-semibold'>TMDB Rating</span>
                                 <div className='flex gap-1 items-center'>

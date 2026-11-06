@@ -125,7 +125,7 @@ export default function RatingModal({ movieId, movieTitle, releaseYear, director
             ) : (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className='flex items-center justify-center gap-2 text-sm text-gray-200 hover:bg-gray-800 font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer transition-colors duration-200 '>
+                    className='flex items-center justify-center gap-2 text-sm font-semibold rounded-sm px-4 py-1.5 border border-gray-800 bg-gray-900 cursor-pointer text-gray-200 hover:bg-gray-800 transition-colors duration-200 '>
                     <span>
                         <Star size={20} color='#68c9da' />
                     </span>Rate this
