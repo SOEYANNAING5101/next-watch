@@ -2,12 +2,23 @@
 import { db } from '../../db/index';
 import { headers } from "next/headers";
 import { auth } from "../lib/auth";
-import { eq, and } from 'drizzle-orm'
+import { eq, and,inArray } from 'drizzle-orm'
 import { watchedMovies, customLists, listItems, movieRatings } from '../../db/schema'
 import { revalidatePath } from 'next/cache';
 import { getMovieDetails } from '../lib/tmdb';
 import { ROULETTE_OPTIONS } from '../lib/roulette-config';
 
+async function getOwnedList(listId:string,userId:string){
+    const [list] = await db
+        .select ({id:customLists.id})
+        .from(customLists)
+        .where(and(
+            eq(customLists.id,listId),
+            eq(customLists.userId,userId)
+        ))
+        .limit(1)
+    return list ?? null;
+}
 export async function checkIfWatched(movieId: number) {
     const session = await auth.api.getSession({
         headers: await headers()
@@ -93,10 +104,15 @@ export async function getListStatus(movideId: number) {
         .select()
         .from(customLists)
         .where(eq(customLists.userId, session.user.id));
-    const savedItems = await db
+    const listIds = userLists.map(l=>l.id)
+
+    const savedItems = listIds.length===0?[]:await db
         .select()
         .from(listItems)
-        .where(eq(listItems.tmdbId, movideId.toString()))
+        .where(and(
+            inArray(listItems.listId,listIds),
+            eq(listItems.tmdbId,movideId.toString())
+        ))
     const savedListIds = savedItems.map(item => item.listId)
     return { lists: userLists, savedListIds }
 }
@@ -105,7 +121,8 @@ export async function toggleMovieInList(listId: string, movieId: number) {
         headers: await headers()
     })
     if (!session) throw new Error("Please log in to continue.")
-
+    const list = await getOwnedList(listId,session.user.id)
+    if (!list) throw new Error("List not found.")
     const existing = await db
         .select()
         .from(listItems)
@@ -157,6 +174,12 @@ export async function getUserLists() {
     return lists;
 }
 export async function getListItems(listId: string) {
+    const session = await auth.api.getSession({
+        headers:await headers()
+    })
+    if (!session) return []
+    const list = await getOwnedList(listId,session.user.id)
+    if (!list) throw new Error("List not found.")
     const items = await db
         .select()
         .from(listItems)
@@ -168,7 +191,8 @@ export async function spinFromList(listId: string) {
         headers: await headers()
     })
     if (!session) throw new Error("Please log in")
-
+    const list = await getOwnedList(listId,session.user.id)
+    if(!list) throw new Error("List not found")
     const items = await db
         .select()
         .from(listItems)
