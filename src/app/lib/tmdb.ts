@@ -15,12 +15,12 @@ export interface CastMember {
     character: string;
     profile_path: string | null;
 }
-export interface CrewMember{
-    id:number;
-    name:string;
-    job:string;
-    department:string;
-    profile_path : string | null;
+export interface CrewMember {
+    id: number;
+    name: string;
+    job: string;
+    department: string;
+    profile_path: string | null;
 }
 
 export interface Movie {
@@ -35,114 +35,82 @@ export interface Movie {
     certification?: string;
 }
 export interface MovieDetails extends Movie {
-    runtime:number;
+    runtime: number;
     genres: Genre[];
     credits: {
-        cast:CastMember[];
-        crew:CrewMember[]
+        cast: CastMember[];
+        crew: CrewMember[]
     };
-    videos:{
-        results:Video[]
+    videos: {
+        results: Video[]
     }
 }
+async function tmdbFetch(path: string, revalidate = 86400) {
+    const token = process.env.TMDB_READ_ACCESS_TOKEN
+    if (!token) throw new Error("TMDB_READ_ACCESS_TOKEN is not set")
+    const res = await fetch(`https://api.themoviedb.org/3${path}`, {
+        headers: { accept: "application/json", Authorization: `Bearer ${token}` },
+        next: { revalidate }
+    }
+    );
+    if (!res.ok) throw new Error(`TMDB request failed (${res.status}) for ${path}`)
+    return res.json();
+}
 
-const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 export async function getTrendingMovies(): Promise<Movie[]> {
-    const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-
-    if (!apiKey) {
-        throw new Error("TMDB API key is missing in .env.local")
-    }
-    const res = await fetch(
-        `${TMDB_BASE_URL}/trending/movie/week?api_key=${apiKey}`,
-        {
-            next: { revalidate: 86400 }
-        }
-    );
-    if (!res.ok) {
-        throw new Error("Failed to fetch trending movies")
-    }
-    const data = await res.json();
-    return data.results;
-}
-export async function getTopRatedMovies(): Promise<Movie[]> {
-    const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-    if (!apiKey) {
-        throw new Error("TMDB API key is missing in .env.local")
-    }
-    const res = await fetch(
-        `${TMDB_BASE_URL}/movie/top_rated?api_key=${apiKey}`,
-        {
-            next: { revalidate: 86400 }
-        }
-    );
-    if (!res.ok) {
-        throw new Error("Failed to fetch top rated movies")
-    }
-    const data = await res.json();
-    return data.results;
-}
-export async function getNewReleases(): Promise<Movie[]> {
-    const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-    if (!apiKey) {
-        throw new Error("TMDB API key is missing in .env.local")
-    }
-    const res = await fetch(
-        `${TMDB_BASE_URL}/movie/now_playing?api_key=${apiKey}`,
-        {
-            next: { revalidate: 86400 }
-        }
-    );
-    if (!res.ok) {
-        throw new Error("Failed to fetch new release movies")
-    }
-    const data = await res.json();
+    const data = await tmdbFetch("/trending/movie/week")
     const rawMovies = data.results;
     const moviesWithRatings = await Promise.all(
-        rawMovies.map(async(movie:Movie)=>{
+        rawMovies.map(async (movie: Movie) => {
             const certification = await getUSCertification(movie.id);
-            return{...movie,certification};
+            return { ...movie, certification };
+        })
+    )
+    return moviesWithRatings;
+}
+export async function getTopRatedMovies(): Promise<Movie[]> {
+    const data = await tmdbFetch("/movie/top_rated")
+    const rawMovies = data.results;
+    const moviesWithRatings = await Promise.all(
+        rawMovies.map(async (movie: Movie) => {
+            const certification = await getUSCertification(movie.id);
+            return { ...movie, certification };
+        })
+    )
+    return moviesWithRatings;
+
+}
+export async function getNewReleases(): Promise<Movie[]> {
+    const data = await tmdbFetch("/movie/now_playing")
+    const rawMovies = data.results;
+    const moviesWithRatings = await Promise.all(
+        rawMovies.map(async (movie: Movie) => {
+            const certification = await getUSCertification(movie.id);
+            return { ...movie, certification };
         })
     )
     return moviesWithRatings;
 }
 
 async function getUSCertification(movieId: number): Promise<string> {
-    const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
     try {
-        const res = await fetch(
-            `${TMDB_BASE_URL}/movie/${movieId}/release_dates?api_key=${apiKey}`,
-            { next: { revalidate: 86400 } }
-        );
-        const data = await res.json();
-        
+        const data = await tmdbFetch(`/movie/${movieId}/release_dates`)
         // Find the US release data
         const usData = data.results?.find((country: any) => country.iso_3166_1 === 'US');
-        
+
         if (usData && usData.release_dates.length > 0) {
             const cert = usData.release_dates.find((release: any) => release.certification !== "")?.certification;
-            return cert || "NR"; // Return "NR" (Not Rated) if blank
+            return cert || "NR";
         }
         return "NR";
-    } catch (error) {
-        return "NR";
+    } catch(error) {
+        console.error(`Certification lookup failed for movie ${movieId}:`, error);
+        return "NR"
     }
 }
-export async function getMovieDetails (id:string):Promise<MovieDetails> {
-    const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-    if (!apiKey) {
-        throw new Error("TMDB API key is missing in .env.local")
-    }
-    const res = await fetch(
-        `${TMDB_BASE_URL}/movie/${id}?api_key=${apiKey}&language=en-US&append_to_response=videos,credits`,
-        {
-            next: { revalidate: 86400 } 
-        }
-    )
-    if (!res.ok){
-        throw new Error(`Failed to fetch details for movie id: ${id}`)
-    }
-    const data = await res.json();
+export async function getMovieDetails(id: string): Promise<MovieDetails> {
+
+    const data = await tmdbFetch(`/movie/${id}?language=en-US&append_to_response=videos,credits`)
     const certification = await getUSCertification(parseInt(id));
     return { ...data, certification };
 }
