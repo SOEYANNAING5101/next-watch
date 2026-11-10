@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
-export async function proxy(request:NextRequest) {
-    const response = await fetch(`${request.nextUrl.origin}/api/auth/get-session`,{
-        headers:{
-            cookie:request.headers.get("cookie")|| ""
-        }
-    });
-    if (!response.ok){
+export async function proxy(request:NextRequest){
+    const sessionCookie = getSessionCookie(request)
+    if(!sessionCookie){
         return NextResponse.redirect(new URL("/signup",request.url))
     }
-    const data = await response.json();
-    if (!data || !data.session){
-        return NextResponse.redirect(new URL("/signup",request.url))
-    }
-    return NextResponse.next();
+    return NextResponse.next()
 }
 export const config = {
-    matcher: ["/my-list"],
-}
+    matcher:["/my-list"]
+};

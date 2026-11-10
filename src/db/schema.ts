@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, uuid, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, uuid, integer, bigint } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -135,3 +135,9 @@ export const movieRatings = pgTable("movie_ratings",{
   createdAt:timestamp("created_at",{withTimezone: true}).defaultNow().notNull(),
   updatedAt:timestamp("updated_at",{withTimezone:true}).defaultNow().notNull()
 });
+export const rateLimit = pgTable("rate_limit",{
+  id:text("id").primaryKey(),
+  key:text("key").notNull().unique(),
+  count:integer("count").notNull(),
+  lastRequest:bigint("last_request",{mode:"number"}).notNull()
+})
