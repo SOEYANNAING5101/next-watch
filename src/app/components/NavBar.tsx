@@ -1,9 +1,13 @@
 'use client'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Bell, User } from 'lucide-react'
+import { Search, Bell, User, LogOut } from 'lucide-react'
 import MobileDrawer from './MobileDrawer'
 import RouletteModal from './RouletteModal';
+import {signOut,useSession} from '../lib/auth-client'
+import {useRouter} from 'next/navigation'
+
+
 export default function Navbar() {
     const pathname = usePathname();
     const getLinkStyle = (path: string) => {
@@ -12,6 +16,13 @@ export default function Navbar() {
             : "text-gray-400 hover:text-gray-200"
             }`
     }
+    const {data:session,isPending} = useSession()
+    const router = useRouter()
+    const handleSignOut = async () => {
+    await signOut()
+    router.push('/')
+    router.refresh()
+  }
     return (
         <nav className="text-gray-200 bg-black px-6 py-3 md:px-12 flex items-center justify-between backdrop-blur-md sticky top-0 z-50">
 
@@ -47,7 +58,15 @@ export default function Navbar() {
             <div className='flex items-center justify-center gap-4'>
                 <button className='text-gray-400'><Search size={20} /></button>
                 <button className='text-gray-400'><Bell size={20} /></button>
-                <Link href='/signup' className='hidden md:flex border rounded-lg'><User size={20} /></Link>
+                {isPending ? null: session ? (
+                    <button onClick={handleSignOut}>
+                        Sign Out
+                    </button>
+                    ):(
+                    <Link href='/login'>
+                        Log In
+                    </Link>
+                    )}
             </div>
         </nav>
     )

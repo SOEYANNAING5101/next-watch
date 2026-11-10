@@ -1,8 +1,8 @@
-import { getWatchedMovies, getUserLists, getListItems } from "../actions/movie-action";
-import { getMovieDetails } from '../lib/tmdb'
-import { auth } from "../lib/auth";
+import { getWatchedMovies, getUserLists, getListItems } from "../../actions/movie-action";
+import { getMovieDetails } from '../../lib/tmdb'
+import { auth } from "../../lib/auth";
 import { headers } from 'next/headers'
-import MovieRow from "../components/MovieRow"
+import MovieRow from "../../components/MovieRow"
 
 
 export default async function MyListPage() {

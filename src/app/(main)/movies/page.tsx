@@ -1,7 +1,7 @@
-import { getTrendingMovies, getTopRatedMovies, getNewReleases } from './lib/tmdb'
-import MovieRow from '../app/components/MovieRow'
+import { getTrendingMovies, getTopRatedMovies, getNewReleases } from '../../lib/tmdb'
+import MovieRow from '../../components/MovieRow'
 
-export default async function HomePage() {
+export default async function MoviesPage() {
   const trendingMovies = await getTrendingMovies();
   const topRatedMovies = await getTopRatedMovies();
   const newReleasedMovies = await getNewReleases();
@@ -28,7 +28,6 @@ export default async function HomePage() {
           movies={newReleasedMovies}
           seeAllHref="" />
       </div>
-
     </main>
   );
 }

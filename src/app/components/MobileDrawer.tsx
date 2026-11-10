@@ -61,7 +61,7 @@ export default function MobileDrawer() {
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
-                className={`fixed left-0 top-0 p-4 z-[60] bg-slate-950 h-[100dvh] w-3/4 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+                className={`fixed left-0 top-0 p-4 z-[60] bg-ink h-[100dvh] w-3/4 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
                     }`}>
                 {/* User Icon */}
                 <div className='flex items-center justify-between'>
