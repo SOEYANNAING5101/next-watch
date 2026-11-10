@@ -1,10 +1,10 @@
-import { getMovieDetails } from '../../lib/tmdb'
-import BackButton from '../../components/BackButton'
-import TrailerButton from '../../components/TrailerButton'
-import WatchedButton from '../../components/WatchedButton'
-import SaveToListModal from "../../components/SaveToListModal"
-import RatingModal from '../../components/RatingModal'
-import { checkIfWatched, getMovieRating } from '../../actions/movie-action'
+import { getMovieDetails } from '../../../lib/tmdb'
+import BackButton from '../../../components/BackButton'
+import TrailerButton from '../../../components/TrailerButton'
+import WatchedButton from '../../../components/WatchedButton'
+import SaveToListModal from "../../../components/SaveToListModal"
+import RatingModal from '../../../components/RatingModal'
+import { checkIfWatched, getMovieRating } from '../../../actions/movie-action'
 import Image from 'next/image'
 import { Dot, Star } from 'lucide-react'
 interface PageProps {

@@ -31,3 +31,19 @@
   scrollbar-color: #1f2937 transparent;
 }
 
+
+@theme {
+   --font-sans: var(--font-geist), system-ui, sans-serif;
+  /* surfaces */
+  --color-ink: #0F1B3D;         /* page */
+  --color-ink-raised: #17254C;  /* cards, modals, drawer */
+  --color-ink-sunken: #0B142E;  /* inputs */
+  --color-line: #2A3A66;        /* borders */
+
+  /* text */
+  --color-paper: #FFFFFF;       /* primary */
+  --color-muted: #A8B2CC;       /* secondary */
+  --color-faint: #7D88A8;       /* placeholders, disabled only */
+
+   --color-accent: #FF3D8B; 
+}

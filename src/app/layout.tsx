@@ -1,6 +1,16 @@
 import "./globals.css";
-import Navbar from './components/NavBar'
 import { Toaster } from 'sonner'
+import { Geist } from 'next/font/google'
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+});
+
+export const metadata = {
+  title: "NextWatch",
+  description: "Find your next watch.",
+};
 
 export default function RootLayout({
   children,
@@ -8,19 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-
-      <body className="bg-slate-950">
-        <Navbar />
+    <html lang="en" className={geist.variable}>
+      <body className="bg-ink font-sans">
         {children}
         <Toaster
           position="top-right"
           theme="dark"
           toastOptions={{
             style: {
-              background: '#020617', 
-              borderColor: '#1e293b', 
-              color: '#f3f4f6', 
+              background: '#17254C',
+              borderColor: '#2A3A66',
+              color: '#FFFFFF',
             },
           }} />
       </body>
