@@ -9,5 +9,15 @@ export const auth = betterAuth({
     }),
     emailAndPassword :{
         enabled:true
+    },
+    rateLimit:{
+        enabled:true,
+        storage:"database",
+        window:10,
+        max:100,
+        customRules:{
+            "/sign-in/email":{window:10,max:5},
+            "/sign-up/email":{window:10,max:5},
+        }
     }
 });
